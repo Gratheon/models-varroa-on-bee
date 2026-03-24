@@ -1,6 +1,8 @@
 import io
 import unittest
 import base64
+import os
+from pathlib import Path
 from unittest.mock import patch
 
 from server import app
@@ -51,6 +53,40 @@ class ServerTestCase(unittest.TestCase):
         body = response.get_json()
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(body["result"]), 1)
+
+    def test_detect_endpoint_real_model_detects_varroa_from_fixture(self):
+        fixture = Path(__file__).parent / "tests" / "fixtures" / "varroa-positive.jpg"
+        weights = Path(__file__).parent / "yolo11n.pt"
+
+        self.assertTrue(fixture.exists(), f"Missing fixture image: {fixture}")
+        self.assertTrue(weights.exists(), f"Missing model weights: {weights}")
+
+        prev_model_weights = os.environ.get("MODEL_WEIGHTS")
+        prev_conf = os.environ.get("CONF_THRES")
+
+        try:
+            os.environ["MODEL_WEIGHTS"] = str(weights.resolve())
+            os.environ["CONF_THRES"] = "0.05"
+
+            response = self.client.post(
+                "/",
+                data={"file": (io.BytesIO(fixture.read_bytes()), "varroa-positive.jpg")},
+                content_type="multipart/form-data",
+            )
+        finally:
+            if prev_model_weights is None:
+                os.environ.pop("MODEL_WEIGHTS", None)
+            else:
+                os.environ["MODEL_WEIGHTS"] = prev_model_weights
+            if prev_conf is None:
+                os.environ.pop("CONF_THRES", None)
+            else:
+                os.environ["CONF_THRES"] = prev_conf
+
+        self.assertEqual(response.status_code, 200)
+        body = response.get_json()
+        self.assertIsNotNone(body)
+        self.assertGreater(body["count"], 0, "Expected at least one varroa detection from fixture image")
 
 
 if __name__ == "__main__":
