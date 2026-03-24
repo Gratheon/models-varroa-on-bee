@@ -15,7 +15,6 @@ output.log
 train.log
 
 # Model weights / datasets / large artifacts
-*.pt
 varroa8k.v1-testing.yolov11/
 
 # macOS
