@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+
+# Virtual environments
+venv/
+.venv/
+
+# Local logs and runtime files
+*.log
+*.pid
+output.log
+train.log
+
+# Model weights / datasets / large artifacts
+*.pt
+varroa8k.v1-testing.yolov11/
+
+# macOS
+.DS_Store

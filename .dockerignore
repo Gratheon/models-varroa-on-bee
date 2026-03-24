@@ -1,0 +1,10 @@
+venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+varroa8k.v1-testing.yolov11
+train.log
+train.pid
+output.log

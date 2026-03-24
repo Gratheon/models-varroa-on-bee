@@ -1,0 +1,11 @@
+services:
+  models-varroa-on-bee:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8752:8752"
+    environment:
+      - PORT=8752
+      - MODEL_WEIGHTS=/app/yolo11n.pt
+    restart: always
