@@ -11,8 +11,8 @@ It exposes a simple HTTP API that accepts an image and returns bounding boxes fo
 
 ## Example Detection
 
-Example output of the in-house model on a real hive image.
-Left: full frame with predicted box. Right: zoomed detection region.
+Example varroa-on-bee annotation on a real hive image.
+Left: full frame with varroa highlights. Right: zoomed varroa region.
 
 ![Varroa-on-bee detection example](docs/images/varroa-detection-example.jpg)
 
