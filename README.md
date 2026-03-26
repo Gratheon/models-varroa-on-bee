@@ -9,6 +9,12 @@ It exposes a simple HTTP API that accepts an image and returns bounding boxes fo
 
 **This model is in-house trained by Gratheon for our varroa-on-bee use case.**
 
+## Example Detection
+
+Example output of the in-house model on a real hive image (bounding boxes are model predictions):
+
+![Varroa-on-bee detection example](docs/images/varroa-detection-example.jpg)
+
 ## Architecture
 
 ### Service Integration Diagram
