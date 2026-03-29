@@ -16,6 +16,40 @@ Left: full frame with varroa highlights. Right: zoomed varroa region.
 
 ![Varroa-on-bee detection example](docs/images/varroa-detection-example.jpg)
 
+## Training Metrics (varroa_model5)
+
+Validation of `best.pt` from a 10-epoch training run:
+
+- Dataset: 1,736 images, 2,807 instances
+- Dataset source: Roboflow Universe `varroa-j8231/varroa8k`, version `1` (`varroa8k.v1-testing.yolov11`)
+- Dataset URL: https://universe.roboflow.com/varroa-j8231/varroa8k/dataset/1
+- Dataset license: CC BY 4.0
+- Training time: 0.966 hours
+- Model: YOLO11n (`2,582,542` params, `6.3` GFLOPs)
+- Runtime: Ultralytics `8.4.24`, Python `3.14.3`, torch `2.10.0` on Apple M3 Pro (MPS)
+
+Overall metrics:
+
+| Metric | Value |
+|---|---:|
+| Precision (Box P) | 0.926 |
+| Recall (R) | 0.823 |
+| mAP50 | 0.871 |
+| mAP50-95 | 0.485 |
+
+Per-class metrics:
+
+| Class | Precision | Recall | mAP50 | mAP50-95 |
+|---|---:|---:|---:|---:|
+| bee | 0.995 | 0.995 | 0.995 | 0.691 |
+| varroa | 0.858 | 0.651 | 0.747 | 0.280 |
+
+Inference speed per image:
+
+- Preprocess: 0.1 ms
+- Inference: 5.3 ms
+- Postprocess: 2.9 ms
+
 ## Architecture
 
 ### Service Integration Diagram
