@@ -86,6 +86,7 @@ just start-prod
 ### Run locally without Docker
 
 ```bash
+pip install -r requirements-server.txt
 just run-local
 ```
 
@@ -183,6 +184,16 @@ Environment variables used by the service:
 - `IOU_THRES` (default: `0.45`)
 - `IMG_SIZE` (default: `640`)
 - `MAX_DET` (default: `20`)
+
+## Logging Dependency
+
+This service installs the shared Python logger directly from GitHub via [`requirements-server.txt`](/Users/artjom/git/gratheon/models-varroa-on-bee/requirements-server.txt):
+
+```txt
+gratheon-log-lib @ https://github.com/Gratheon/log-lib-py/archive/03b30ba.zip
+```
+
+That means we can reuse the library without publishing to PyPI, while still keeping it versioned and pinned.
 
 ## Testing
 

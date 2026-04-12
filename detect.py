@@ -1,30 +1,20 @@
-import datetime
 import time
 from typing import Any, Dict, List, Optional
 
 import cv2
 import numpy as np
+from gratheon_log_lib import error, info, warn
 from ultralytics import YOLO
 
 _model: Optional[YOLO] = None
 
 
-def _ts() -> str:
-    return datetime.datetime.now().isoformat(timespec="milliseconds")
-
-
-def _log(level: str, message: str, **kwargs) -> None:
-    details = " ".join([f"{k}={v}" for k, v in kwargs.items()])
-    suffix = f" {details}" if details else ""
-    print(f"[{_ts()}] [{level}] {message}{suffix}", flush=True)
-
-
 def load_model(weights_path: str) -> YOLO:
     global _model
     if _model is None:
-        _log("INFO", "loading varroa-on-bee model", weights_path=weights_path)
+        info("loading varroa-on-bee model", {"weights_path": weights_path})
         _model = YOLO(weights_path, verbose=False)
-        _log("INFO", "model loaded")
+        info("model loaded")
     return _model
 
 
@@ -37,18 +27,19 @@ def run(
     max_det: int = 20,
 ) -> List[Dict[str, Any]]:
     if not image_buffer:
-        _log("WARN", "empty image buffer passed to detector")
+        warn("empty image buffer passed to detector")
         return []
 
     started_at = time.perf_counter()
-    _log(
-        "INFO",
+    info(
         "starting detection",
-        image_bytes=len(image_buffer),
-        conf_thres=conf_thres,
-        iou_thres=iou_thres,
-        imgsz=imgsz,
-        max_det=max_det,
+        {
+            "image_bytes": len(image_buffer),
+            "conf_thres": conf_thres,
+            "iou_thres": iou_thres,
+            "imgsz": imgsz,
+            "max_det": max_det,
+        },
     )
 
     model = load_model(weights)
@@ -57,10 +48,10 @@ def run(
     image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
     if image is None:
-        _log("ERROR", "failed to decode image buffer")
+        error("failed to decode image buffer")
         return []
 
-    _log("INFO", "decoded image", shape=image.shape)
+    info("decoded image", {"shape": image.shape})
 
     inference_started_at = time.perf_counter()
     results = model(
@@ -102,15 +93,16 @@ def run(
     max_conf = round(max((d["confidence"] for d in detections), default=0.0), 4)
     min_conf = round(min((d["confidence"] for d in detections), default=0.0), 4)
 
-    _log(
-        "INFO",
+    info(
         "detection complete",
-        detections=len(detections),
-        per_result_counts=per_result_counts,
-        min_conf=min_conf,
-        max_conf=max_conf,
-        inference_ms=inference_ms,
-        total_ms=total_ms,
+        {
+            "detections": len(detections),
+            "per_result_counts": per_result_counts,
+            "min_conf": min_conf,
+            "max_conf": max_conf,
+            "inference_ms": inference_ms,
+            "total_ms": total_ms,
+        },
     )
 
     return detections

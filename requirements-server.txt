@@ -2,3 +2,4 @@ flask>=3.0.0
 numpy>=1.24.0
 opencv-python-headless>=4.8.0
 ultralytics>=8.0.0
+gratheon-log-lib @ https://github.com/Gratheon/log-lib-py/archive/03b30ba.zip
