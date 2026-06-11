@@ -3,8 +3,14 @@ from typing import Any, Dict, List, Optional
 
 import cv2
 import numpy as np
+import torch
 from gratheon_log_lib import error, info, warn
 from ultralytics import YOLO
+
+
+# Production CPU does not support NNPACK; leaving it enabled prints scary warnings
+# for every inference even though detection succeeds. Disable it before model use.
+torch.backends.nnpack.set_flags(False)
 
 _model: Optional[YOLO] = None
 

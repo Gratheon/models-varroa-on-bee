@@ -29,6 +29,15 @@ class ServerTestCase(unittest.TestCase):
         self.assertIn("<form", body)
         self.assertIn("name=\"file\"", body)
 
+    def test_health_reports_weight_status(self):
+        response = self.client.get("/health")
+
+        self.assertEqual(response.status_code, 200)
+        body = response.get_json()
+        self.assertEqual(body["status"], "ok")
+        self.assertIn("weights_present", body)
+        self.assertIn("weights_path", body)
+
     @patch("server._run_detection")
     def test_detect_endpoint_returns_detections(self, mock_run_detection):
         mock_run_detection.return_value = [
@@ -53,6 +62,19 @@ class ServerTestCase(unittest.TestCase):
         body = response.get_json()
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(body["result"]), 1)
+
+    @patch("server._run_detection")
+    def test_detect_alias_accepts_query_threshold(self, mock_run_detection):
+        mock_run_detection.return_value = []
+
+        response = self.client.post(
+            "/detect?conf=0.6",
+            data={"file": (io.BytesIO(self._jpeg_bytes()), "bee.jpg")},
+            content_type="multipart/form-data",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        mock_run_detection.assert_called_once()
 
     def test_detect_endpoint_real_model_detects_varroa_from_fixture(self):
         fixture = Path(__file__).parent / "tests" / "fixtures" / "varroa-positive.jpg"

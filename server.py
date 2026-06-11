@@ -57,10 +57,12 @@ def _run_detection(image_bytes: bytes, request_id: str) -> Any:
     from detect import run
 
     weights = os.getenv("MODEL_WEIGHTS", "/app/yolo11n.pt")
-    conf_thres = float(os.getenv("CONF_THRES", "0.25"))
-    iou_thres = float(os.getenv("IOU_THRES", "0.45"))
-    imgsz = int(os.getenv("IMG_SIZE", "640"))
-    max_det = int(os.getenv("MAX_DET", "20"))
+    # Match the queen-detector contract: callers may pass per-request thresholds
+    # as query params while env vars remain the service defaults.
+    conf_thres = float(request.args.get("conf") or request.args.get("conf_thres") or os.getenv("CONF_THRES", "0.25"))
+    iou_thres = float(request.args.get("iou") or request.args.get("iou_thres") or os.getenv("IOU_THRES", "0.45"))
+    imgsz = int(request.args.get("imgsz") or request.args.get("img_size") or os.getenv("IMG_SIZE", "640"))
+    max_det = int(request.args.get("max_det") or os.getenv("MAX_DET", "20"))
 
     info(
         "running varroa-on-bee inference",
@@ -161,11 +163,18 @@ def index():
 
 
 @app.get("/health")
-def health() -> Dict[str, str]:
-    return {"message": "varroa-on-bee detector is running"}
+def health() -> Dict[str, Any]:
+    weights = os.getenv("MODEL_WEIGHTS", "/app/yolo11n.pt")
+    return {
+        "message": "varroa-on-bee detector is running",
+        "status": "ok",
+        "weights_present": os.path.exists(weights),
+        "weights_path": weights,
+    }
 
 
 @app.post("/")
+@app.post("/detect")
 def detect_endpoint():
     started_at = time.perf_counter()
     info(

@@ -122,18 +122,28 @@ Returns service health:
 
 ```json
 {
-  "message": "varroa-on-bee detector is running"
+  "message": "varroa-on-bee detector is running",
+  "status": "ok",
+  "weights_present": true,
+  "weights_path": "/app/yolo11n.pt"
 }
 ```
 
-### `POST /`
+### `POST /` and `POST /detect`
 
-Accepts `multipart/form-data` with field name `file`.
+Accepts `multipart/form-data` with field name `file`. The `/detect` alias exists for parity with `models-queen-bee-detector`.
+
+Optional query parameters override environment defaults per request:
+
+- `conf` or `conf_thres` (default: `CONF_THRES`, fallback `0.25`)
+- `iou` or `iou_thres` (default: `IOU_THRES`, fallback `0.45`)
+- `imgsz` or `img_size` (default: `IMG_SIZE`, fallback `640`)
+- `max_det` (default: `MAX_DET`, fallback `20`)
 
 Example:
 
 ```bash
-curl -X POST -F "file=@image.jpg" http://localhost:8752
+curl -X POST -F "file=@image.jpg" "http://localhost:8752/detect?conf=0.6"
 ```
 
 Success response shape:

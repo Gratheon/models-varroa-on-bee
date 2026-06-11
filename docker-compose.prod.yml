@@ -3,9 +3,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "8752:8752"
     environment:
+      - ENV_ID=prod
       - PORT=8752
       - MODEL_WEIGHTS=/app/yolo11n.pt
-    restart: always
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://127.0.0.1:4318}
+      - OTEL_SERVICE_NAME=models-varroa-on-bee
+      - OTEL_RESOURCE_ATTRIBUTES=deployment.environment.name=prod,service.namespace=gratheon
+      - HYPERDX_API_KEY=${HYPERDX_API_KEY:-}
+    restart: unless-stopped
+    network_mode: host
