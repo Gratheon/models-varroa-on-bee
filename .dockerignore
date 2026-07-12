@@ -1,10 +1,56 @@
-venv
-__pycache__
-*.pyc
-*.pyo
-*.pyd
+# Docker build context
+.git
+.github
+.cache
+.idea
+.vscode
 .DS_Store
-varroa8k.v1-testing.yolov11
-train.log
-train.pid
-output.log
+.env
+*.log
+
+# Local Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+ENV*/
+*.egg-info/
+build/
+dist/
+
+# Training datasets and local experiments
+varroa8k.v1-testing.yolov11/
+runs/
+exports/
+yolov8*.pt
+test.*
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.bmp
+*.avi
+*.mp4
+
+# Model artifacts are mounted at runtime in docker-compose.
+weights/*
+!weights/README.md
+*.onnx
+*.engine
+*.tflite
+*.mlmodel
+*.torchscript
+*.torchscript.pt
+*.h5
+*.pb
+*_saved_model/
+*_web_model/
+*_openvino_model/
+
+# Compose and docs are not needed at runtime.
+docker-compose*.yml
+README.md
